@@ -1,0 +1,20 @@
+﻿services:
+  - type: web
+    name: health-tracker-backend
+    runtime: python
+    buildCommand: pip install -r requirements-prod.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn healthtracker.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: health-tracker-db
+          property: connectionString
+      - key: DEBUG
+        value: False
+
+databases:
+  - name: health-tracker-db
+    databaseName: healthtracker
+    user: healthtracker_user
